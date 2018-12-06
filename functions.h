@@ -21,34 +21,27 @@ void create(fstream& file)
 	return;
 }
 
-void sequentialSearch(fstream& file)
+bool sequentialSearch(fstream& file)
 {
-	size_t position = 0;
-	bool fl = 0;
-	file.open("StudentsGrades.db", ios::in);
-	if (!file) {
-		cerr << "File couldn't be opened! \n";
-		return;
-	}
-	string fac_num;
+	unsigned long long fac_num;
 	cin >> fac_num;
-	string temp;// get line from file
-	while (!file.eof())
+	file.open("StudentsGrades.db", ios::in);
+	if (!file) { cerr << "The file couldn't be opened!\n"; return 0; }
+	file.seekg(ios::beg);
+	Student st;
+	while (file >> st)
 	{
-		getline(file, temp);
-		position = temp.find(fac_num);// search for fac_num
-		if (position != string::npos) // string::npos is returned if string is not found
+		if (st.GetFacNum() == fac_num)
 		{
-			cout << temp << endl;
-			fl = 1;
-			break;
+			
+				cout << st;
+			file.close();
+			return 1;
 		}
 	}
-	if (!fl)
-	{
-		cout << "Record not found! \n";
-	}
+	cout << "Record not found! \n";
 	file.close();
+	return 0;
 }
 
 class Operation
