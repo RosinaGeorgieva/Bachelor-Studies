@@ -1,0 +1,310 @@
+﻿<!DOCTYPE html>
+
+<!--
+	Това е демо-шаблон на първото домашно задание по ОКГ.
+	Вижте коментарите във файла, за да видите къде да променяте.
+	
+	Показване/скриване на рамката става с натискане на клавиш
+	или с кликване на миши бутон.
+-->
+	
+<html>
+	<head>
+		<script src="three.min.js"></script>
+		<script src="hangul.js"></script>
+	</head>
+	
+	<body onload="main()">
+		<!-- В тага h1 си напишете факултетния номер, групата в Мудъл и двете си имена -->
+		<h1>ф.н. 81599 &ndash; група 5 &ndash; Росина Георгиева</h1>
+
+		<script>
+			var material = new THREE.MeshPhongMaterial({color:'gray',shininess:100});
+			var extrudeSettings = { amount: 6, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 0.1, bevelThickness: 0.1, curveSegments: 60 };
+			
+			
+			//Средна хоризонтална линия вляво
+			var shape = new THREE.Shape();
+			shape.moveTo( -15.64,0.71);
+			shape.quadraticCurveTo(-17.31,1.45, -18,2);
+			shape.quadraticCurveTo(-16.94,1.84, -15.01,1.62);
+			shape.lineTo(-5.73,1.66);
+			shape.quadraticCurveTo(-3.9,1.69,-3,2.14);
+			shape.quadraticCurveTo(-2.52,2.3,-1.97,2.24);
+			shape.quadraticCurveTo(0.56,2.24,-0.8,1.6);
+			shape.quadraticCurveTo(-1.3,1.49,-2.33,1.47);
+			shape.quadraticCurveTo(-3.76,1.51,-6.36,1.4);
+			shape.quadraticCurveTo(-8.92,1.32,-10.89,1.29);
+			shape.quadraticCurveTo(-12.2,1.25,-13.64,1.21);
+			shape.quadraticCurveTo(-14.71,1.19,-15.44,0.71);
+		
+			var geometry = new THREE.ExtrudeGeometry( shape, extrudeSettings );
+			var lineOne = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial({specular:'white'}) );
+			word.add( lineOne);
+			
+			
+			//Вертикална линия вляво
+			var shapeTwo = new THREE.Shape();
+			shapeTwo.moveTo( -9.64,1.71);
+			shapeTwo.quadraticCurveTo(-9.82,3.17,-9.79,4.63);
+			shapeTwo.lineTo(-8.9,4.63);
+			shapeTwo.quadraticCurveTo(-8.83,3.21,-9.07,1.69);
+			shapeTwo.lineTo(-9.64,1.71);
+			
+			var geometryTwo = new THREE.ExtrudeGeometry( shapeTwo, extrudeSettings );
+			var lineTwo = new THREE.Mesh( geometryTwo, new THREE.MeshPhongMaterial({specular:'white'}) );
+			word.add(lineTwo);
+			
+			
+			//Първа хоризонтална линия горе вляво
+			var shapeThree = new THREE.Shape();
+			shapeThree.moveTo(-12,3.62);
+			shapeThree.quadraticCurveTo(-12,1.62,-11,1.62);
+			shapeThree.quadraticCurveTo(-3.9,1.69,-3,2.14);
+			shapeThree.quadraticCurveTo(-2.52,2.3,-1.97,2.24);
+			shapeThree.quadraticCurveTo(0.56,2.24,-0.8,1.6);
+			shapeThree.quadraticCurveTo(-1.3,1.49,-2.33,1.47);
+			shapeThree.quadraticCurveTo(-3.76,1.51,-6.36,1.4);
+			shapeThree.quadraticCurveTo(-8.92,1.32,-10.89,1.29);
+			shapeThree.quadraticCurveTo(-12.2,1.25,-12,1.18);
+			shapeThree.lineTo(-11.9,1.62);
+			
+			var geometryThree = new THREE.ExtrudeGeometry( shapeThree, extrudeSettings );
+			var lineThree = new THREE.Mesh( geometryThree, new THREE.MeshPhongMaterial({specular:'white'}) );
+			lineThree.position.set(-3.5,3.46,0);
+			lineThree.scale.set(5/6,5/6,1);
+			word.add(lineThree);
+			
+			
+			//Втора хоризонтална линия горе вляво
+			var shapeFour = new THREE.Shape();
+			shapeFour.moveTo(-11.5,1.62);
+			shapeFour.quadraticCurveTo(-3.9,1.69,-3,2.14);
+			shapeFour.quadraticCurveTo(-2.52,2.3,-1.97,2.24);
+			shapeFour.quadraticCurveTo(0.56,2.24,-0.8,1.6);
+			shapeFour.quadraticCurveTo(-1.3,1.49,-2.33,1.47);
+			shapeFour.quadraticCurveTo(-3.76,1.51,-6.36,1.4);
+			shapeFour.quadraticCurveTo(-8.92,1.32,-10,1.29);
+			shapeFour.quadraticCurveTo(-12,1.3,-11.5,-3);
+			shapeFour.lineTo(-11.5,-3);
+			
+			var geometryFour = new THREE.ExtrudeGeometry( shapeFour, extrudeSettings );
+			var lineFour = new THREE.Mesh( geometryFour, new THREE.MeshPhongMaterial({specular:'white'}) );
+			lineFour.position.set(-4,8.2,0);
+			lineFour.scale.set(5/6,5/6,1);
+			word.add(lineFour);
+			
+			
+			//Долна хоризонтална част вляво
+			var shapeFive = new THREE.Shape();
+			shapeFive.moveTo( -15.64,0.71);
+			shapeFive.quadraticCurveTo(-17.31,1.45, -18,2);
+			shapeFive.quadraticCurveTo(-16.94,1.84, -15.01,1.62);
+			shapeFive.lineTo(-5.73,1.66);
+			shapeFive.quadraticCurveTo(-3.9,1.69,-3,2.14);
+			shapeFive.quadraticCurveTo(-2.52,2.3,-1.97,2.24);
+			shapeFive.quadraticCurveTo(0.56,2.24,-0.8,1.6);
+			shapeFive.quadraticCurveTo(-1.3,1.49,-2.33,1.47);
+			shapeFive.quadraticCurveTo(-3.76,1.51,-6.36,1.4);
+			shapeFive.quadraticCurveTo(-8.92,1.32,-10.89,1.29);
+			shapeFive.quadraticCurveTo(-12.2,1.25,-13.64,1.21);
+			shapeFive.quadraticCurveTo(-14.71,1.19,-15.44,0.71);
+
+			var geometryFive = new THREE.ExtrudeGeometry( shapeFive, extrudeSettings );
+			var lineFive  = new THREE.Mesh( geometryFive , new THREE.MeshPhongMaterial({specular:'white'}) );
+			lineFive.position.set(-3,-3,0);
+			lineFive.scale.set(2/3,2/3,1);
+			word.add(lineFive);
+			
+			
+			//"Краче" вляво
+			var shapeSix = new THREE.Shape();
+			shapeSix.moveTo(-4.6,-1.9);
+			shapeSix.lineTo(-4.6,-6.83);
+			shapeSix.quadraticCurveTo(-4.4,-7.24,-3.9,-5.98);
+			shapeSix.quadraticCurveTo(-3.7,-4.97,-3.7,-3.7);
+			shapeSix.quadraticCurveTo(-3.7,-2,-3.4,-1.8);
+			shapeSix.lineTo(-4.6,-1.9);
+			
+			var geometrySix = new THREE.ExtrudeGeometry( shapeSix, extrudeSettings );
+			var lineSix  = new THREE.Mesh( geometrySix , new THREE.MeshPhongMaterial({specular:'white'}) );
+			word.add(lineSix);
+			
+			
+			//"Свързване" на горната част вляво
+			var shapeSeven = new THREE.Shape();
+			shapeSeven.moveTo(-13.3,4.5);
+			shapeSeven.quadraticCurveTo(-14.45,4.49,-14.33,5.94);
+			shapeSeven.lineTo(-14.33,8.91);
+			shapeSeven.quadraticCurveTo(-14.93,9.47,-15.99,9.58);
+			shapeSeven.quadraticCurveTo(-15.28,10.12,-13.18,9.52);
+			shapeSeven.lineTo(-13.3,4.5);
+			
+			var geometrySeven = new THREE.ExtrudeGeometry( shapeSeven, extrudeSettings );
+			var lineSeven  = new THREE.Mesh( geometrySeven , new THREE.MeshPhongMaterial({specular:'white'}) );
+			word.add(lineSeven);
+			
+			
+			//Долна дясна част
+			var shapeEight = new THREE.Shape();
+			shapeEight.moveTo(-12,3.62);
+			shapeEight.quadraticCurveTo(-12,1.62,-11,1.62);
+			shapeEight.quadraticCurveTo(-3.9,1.69,-3,2.14);
+			shapeEight.quadraticCurveTo(-2.52,2.3,-1.97,2.24);
+			shapeEight.quadraticCurveTo(0.56,2.24,-0.8,1.6);
+			shapeEight.quadraticCurveTo(-1.3,1.49,-2.33,1.47);
+			shapeEight.quadraticCurveTo(-3.76,1.51,-6.36,1.4);
+			shapeEight.quadraticCurveTo(-8.92,1.32,-10.89,1.29);
+			shapeEight.quadraticCurveTo(-12.2,1.25,-12,1.18);
+			shapeEight.lineTo(-12,1.62);
+			
+			var geometryEight = new THREE.ExtrudeGeometry( shapeEight, extrudeSettings );
+			var lineEight = new THREE.Mesh( geometryEight, new THREE.MeshPhongMaterial({specular:'white'}) );
+			lineEight.position.set(16.6,-6.96,0);
+			lineEight.scale.set(4/5,4/5,1);
+			word.add(lineEight);
+		
+			var shapeNine = new THREE.Shape();
+			shapeNine.moveTo(-11.5,1.62);
+			shapeNine.quadraticCurveTo(-3.9,1.69,-3,2.14);
+			shapeNine.quadraticCurveTo(-2.52,2.3,-1.97,2.24);
+			shapeNine.quadraticCurveTo(0.56,2.24,-0.8,1.6);
+			shapeNine.quadraticCurveTo(-1.3,1.49,-2.33,1.47);
+			shapeNine.quadraticCurveTo(-3.76,1.51,-6.36,1.4);
+			shapeNine.quadraticCurveTo(-8.92,1.32,-10.89,1.29);
+			shapeNine.quadraticCurveTo(-8.92,1.32,-10,1.29);
+			shapeNine.quadraticCurveTo(-12,1.3,-11.5,-3);
+			shapeNine.lineTo(-11.5,-3);
+			
+			var geometryNine = new THREE.ExtrudeGeometry( shapeNine, extrudeSettings );
+			var lineNine = new THREE.Mesh( geometryNine, new THREE.MeshPhongMaterial({specular:'white'}) );
+			lineNine.position.set(15,-3.8,0);
+			lineNine.scale.set(5/7,5/7,1);
+			word.add(lineNine);
+			
+			var shapeTen = new THREE.Shape();
+			shapeTen.moveTo(-13.3,4.5);
+			shapeTen.quadraticCurveTo(-14.45,4.49,-14.33,5.94);
+			shapeTen.lineTo(-14.33,8.91);
+			shapeTen.quadraticCurveTo(-14.93,9.47,-15.99,9.58);
+			shapeTen.quadraticCurveTo(-15.28,10.12,-13.18,9.52);
+			shapeTen.lineTo(-13.3,4.5);
+			
+			var geometryTen = new THREE.ExtrudeGeometry( shapeTen, extrudeSettings );
+			var lineTen  = new THREE.Mesh( geometryTen , new THREE.MeshPhongMaterial({specular:'white'}) );
+			lineTen.position.set(16,-9,0);
+			lineTen.scale.set(2/3,2/3,1);
+			word.add(lineTen);
+			
+			
+			//Вертикална линия долу вдясно
+			var shapeEleven = new THREE.Shape();
+			shapeEleven.moveTo(14,0.2);
+			shapeEleven.lineTo(13.67,-2.4);
+			shapeEleven.lineTo(14.0,-2.4);
+			shapeEleven.lineTo(14.8,0.2);
+			shapeEleven.lineTo(14,0.2);
+			
+			var geometryEleven = new THREE.ExtrudeGeometry( shapeEleven, extrudeSettings );
+			var lineEleven  = new THREE.Mesh( geometryEleven , new THREE.MeshPhongMaterial({specular:'white'}) );
+			word.add(lineEleven);
+			
+			
+			//Горен орнамент на долна дясна част
+			var shapeTwelve = new THREE.Shape();
+			shapeTwelve.moveTo( -15.64,0.71);
+			shapeTwelve.quadraticCurveTo(-17.31,1.45, -18,2);
+			shapeTwelve.quadraticCurveTo(-16.94,1.84, -15.01,1.62);
+			shapeTwelve.lineTo(-5.73,1.66);
+			shapeTwelve.quadraticCurveTo(-3.9,1.69,-3,2.14);
+			shapeTwelve.quadraticCurveTo(-2.52,2.3,-1.97,2.24);
+			shapeTwelve.quadraticCurveTo(0.56,2.24,-0.8,1.6);
+			shapeTwelve.quadraticCurveTo(-1.3,1.49,-2.33,1.47);
+			shapeTwelve.quadraticCurveTo(-3.76,1.51,-6.36,1.4);
+			shapeTwelve.quadraticCurveTo(-8.92,1.32,-10.89,1.29);
+			shapeTwelve.quadraticCurveTo(-12.2,1.25,-13.64,1.21);
+			shapeTwelve.quadraticCurveTo(-14.71,1.19,-15.44,0.71);
+		
+			var geometryTwelve = new THREE.ExtrudeGeometry( shapeTwelve, extrudeSettings );
+			var lineTwelve  = new THREE.Mesh( geometryTwelve , new THREE.MeshPhongMaterial({specular:'white'}) );
+			lineTwelve.position.set(15.2,-0.7,0);
+			lineTwelve.scale.set(0.55,0.55,1);
+			word.add(lineTwelve);
+			
+			
+			//Горна дясна част
+			var shapeThirteen = new THREE.Shape();
+			shapeThirteen.moveTo(-4.6,-1.9);
+			shapeThirteen.lineTo(-4.6,-6.83);
+			shapeThirteen.quadraticCurveTo(-4.4,-7.24,-3.9,-5.98);
+			shapeThirteen.quadraticCurveTo(-3.7,-4.97,-3.7,-3.7);
+			shapeThirteen.quadraticCurveTo(-3.7,-2,-3.4,-1.8);
+			shapeThirteen.lineTo(-4.6,-1.9);
+			
+			var geometryThirteen = new THREE.ExtrudeGeometry( shapeThirteen, extrudeSettings );
+			var lineThirteen  = new THREE.Mesh( geometryThirteen , new THREE.MeshPhongMaterial({specular:'white'}) );
+			lineThirteen.position.set(18,13,0);
+			lineThirteen.scale.set(5/6,1.7,1);
+			word.add(lineThirteen);
+			
+			
+			//"Шапка" на вертикалната линия на горната дясна част
+			var shapeFourteen = new THREE.Shape();
+			
+			shapeFourteen.moveTo(-14.33,8.91);
+			shapeFourteen.quadraticCurveTo(-14,9.47,-16.3,10);
+			shapeFourteen.quadraticCurveTo(-15.28,10.12,-13.5,9.7);
+			shapeFourteen.quadraticCurveTo(-13,9.5,-13.6,8.9);
+			shapeFourteen.quadraticCurveTo(-13.8,9,-13.8,6);
+			shapeFourteen.lineTo(-13.8,4.5);
+			
+			var geometryFourteen = new THREE.ExtrudeGeometry( shapeFourteen, extrudeSettings );
+			var lineFourteen  = new THREE.Mesh( geometryFourteen , new THREE.MeshPhongMaterial({specular:'white'}) );
+			lineFourteen.position.set(28.5,-1,0);
+			lineFourteen.scale.set(1,1.2,1);
+			word.add(lineFourteen);
+			
+			
+			//Кръгла горна дясна част
+			var shapeFifteen = new THREE.Shape();
+			shapeFifteen.moveTo(7,9);
+			shapeFifteen.quadraticCurveTo(3,9,2.7,5);
+			shapeFifteen.quadraticCurveTo(3,1,7,1);
+			shapeFifteen.quadraticCurveTo(11,1,11.3,5);
+			shapeFifteen.quadraticCurveTo(11,9,7,9);
+					
+			var hole = new THREE.Path();
+			hole.moveTo(  7, 8.5 );
+			hole.quadraticCurveTo(3.5,8.5,3.5,5);
+			hole.quadraticCurveTo(3.5,1.5,7,1.5);
+			hole.quadraticCurveTo(10.5,1.5,10.5,5);
+			hole.quadraticCurveTo(10.5,8.5,7,8.5);
+			shapeFifteen.holes.push(hole);
+			
+			var geometryFifteen = new THREE.ExtrudeGeometry( shapeFifteen, extrudeSettings );
+			var lineFifteen  = new THREE.Mesh( geometryFifteen , new THREE.MeshPhongMaterial({specular:'white'}) );
+			lineFifteen.position.set(0,1.5,0);
+			lineFifteen.scale.set(0.8,0.8,1);
+			word.add(lineFifteen);
+			
+			
+			//"Байряк" на кръгчето
+			var shapeSixteen = new THREE.Shape();
+			shapeSixteen.moveTo(6.5,9);
+			shapeSixteen.quadraticCurveTo(7.5,9.5,6.5,10);
+			shapeSixteen.quadraticCurveTo(6.5,10,7.5,9.8);
+			shapeSixteen.quadraticCurveTo(7.7,9.8,7.5,9.5);
+			shapeSixteen.lineTo(7.25,9);
+			
+			var geometrySixteen = new THREE.ExtrudeGeometry( shapeSixteen, extrudeSettings );
+			var lineSixteen  = new THREE.Mesh( geometrySixteen, new THREE.MeshPhongMaterial({specular:'white'}) );
+			lineSixteen.position.set(-1,-0.5,0);
+			word.add(lineSixteen);
+		
+		
+			//Поставяне на думата в правоъгълника и преоразмеряване, така че да пасва
+			word.position.set(0,-2,-2);
+			word.scale.set(1.1,1.1,1);
+		</script>
+	</body>
+</html>
