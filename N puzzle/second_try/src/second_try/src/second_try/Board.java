@@ -8,6 +8,7 @@ public class Board {
 	private int rowOfEmptyTile;
 	private int colOfEmptyTile;
 	private int manhattanDistance;
+	private String direction;
 	
 	public Board(int size, int xOfEmptyTile, int yOfEmptyTile) {//вика се с goalCoordinates на 0-лата и за конструиране на goal
 		this.size = size;
@@ -28,7 +29,7 @@ public class Board {
 		this.manhattanDistance = 0;
 	}
 	
-	public Board(int[][] board, int size, int xOfEmptyTile, int yOfEmptyTile) {
+	public Board(int[][] board, int size, int xOfEmptyTile, int yOfEmptyTile, String direction) {
 		this.size = size;
 		this.board = new int[this.size][this.size];
 		for(int i = 0; i < this.size; i++) {
@@ -38,23 +39,24 @@ public class Board {
 		}
 		this.rowOfEmptyTile = xOfEmptyTile;
 		this.colOfEmptyTile = yOfEmptyTile;
+		this.direction = direction;
 		this.manhattanDistance = manhattanDistance();
 	}
 	
 	public Board moveEmptyTileDown() {
-		return moveTile(rowOfEmptyTile + 1, colOfEmptyTile);
+		return moveTile(rowOfEmptyTile + 1, colOfEmptyTile, "up");
 	}
 	
 	public Board moveEmptyTileUp() {
-		return moveTile(rowOfEmptyTile - 1, colOfEmptyTile);
+		return moveTile(rowOfEmptyTile - 1, colOfEmptyTile, "down");
 	}
 	
 	public Board moveEmptyTileLeft() {
-		return moveTile(rowOfEmptyTile, colOfEmptyTile - 1);
+		return moveTile(rowOfEmptyTile, colOfEmptyTile - 1, "right");
 	}
 	
 	public Board moveEmptyTileRight() {
-		return moveTile(rowOfEmptyTile, colOfEmptyTile + 1);
+		return moveTile(rowOfEmptyTile, colOfEmptyTile + 1, "left");
 	}
 	
 	public int getManhattanDistance() {
@@ -65,7 +67,6 @@ public class Board {
 		for(int i = 0; i < this.size; i++) {
 			for(int j = 0; j < this.size; j++) {
 				if(this.board[i][j] != other.board[i][j]) {
-//					System.out.println(i + " " + j);
 					return false;
 				}
 			}
@@ -107,9 +108,13 @@ public class Board {
 		return true;
 	}
 
-	private Board moveTile(int newX, int newY) {
+	public String getDirection() {
+		return this.direction;
+	}
+	
+	private Board moveTile(int newX, int newY, String direction) {
 		if(newX >= 0 && newY >= 0 && newX < this.size && newY < this.size) {
-			return new Board(generateChild(newX, newY), this.size, newX, newY);
+			return new Board(generateChild(newX, newY), this.size, newX, newY, direction);
 		}
 		return null;
 	}

@@ -17,17 +17,18 @@ public class App {
 		}
 		sc.close();
 		
-		Board start = new Board(board, size, indicesOfEmptyTile(board, size)[0], indicesOfEmptyTile(board, size)[1]);
+		Board start = new Board(board, size, indicesOfEmptyTile(board, size)[0], indicesOfEmptyTile(board, size)[1], "start");
 
 		IDAStar algorithm = new IDAStar(N, goalIndexOfEmptyTile);
 				
 		long beginning = System.currentTimeMillis();
-		int minimalPathCost = algorithm.execute(start);
+		algorithm.execute(start);
 		long end = System.currentTimeMillis();
 		long duration = end - beginning;
 		
 		System.out.println("Duration = " + duration);
-		System.out.println("Shortest Path Length = " + minimalPathCost);
+//		System.out.println("Shortest Path Length = " + minimalPathCost);
+		algorithm.result();
 	}
 	
 	private static int[] indicesOfEmptyTile(int[][] board, int size) {

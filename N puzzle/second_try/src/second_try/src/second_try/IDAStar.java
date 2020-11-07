@@ -9,11 +9,13 @@ public class IDAStar {
 	private static final int FOUND = -1;
 	
 	private Deque<Board> path;
+	private Deque<Board> result;
 	private Board goal;
 	private int minimalPathSize;
 	
 	public IDAStar(int N, int goalIndex) {
 		this.path = new ArrayDeque<>();
+		this.result = new ArrayDeque<>();
 		int size = (int)Math.sqrt(N+1);
 		if(goalIndex == -1) {
 			this.goal = new Board((int)Math.sqrt(N + 1), size - 1, size - 1);
@@ -33,6 +35,16 @@ public class IDAStar {
 		return minimalPathSize;
 	}
 	
+	public void result() {
+		System.out.println(minimalPathSize);
+		while(!result.isEmpty()) {
+			String direction = result.pop().getDirection();
+			if(!direction.equals("start")) {
+				System.out.println(direction);
+			}
+		}
+	}
+	
 	private int search(int currentPathCost, int threshold) {
 		Board current = path.peek();
 //		current.print();
@@ -41,7 +53,9 @@ public class IDAStar {
 			return totalPathCost;
 		}
 		if(current.isEqualTo(goal)) {
-			minimalPathSize = path.size() - 1;
+//			minimalPathSize = path.size() - 1;
+//			result = path.
+			setResult();
 			return FOUND;
 		}
 		int min = Integer.MAX_VALUE;
@@ -70,6 +84,13 @@ public class IDAStar {
 			}
 		}
 		return min;
+	}
+	
+	private void setResult() {
+		minimalPathSize = path.size() - 1;
+		while(!path.isEmpty()) {
+			result.push(path.pop());
+		}
 	}
 	
 	private int goalRow(int number, int size) {
