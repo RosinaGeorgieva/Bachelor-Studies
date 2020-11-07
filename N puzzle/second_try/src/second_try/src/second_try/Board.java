@@ -3,20 +3,22 @@ package second_try;
 import java.util.Arrays;
 
 public class Board {
+	private static final int MANHATTAN_DISTANCE_OF_GOAL = 0;
+	
 	private int[][] board;
 	private int size;
-	private int rowOfEmptyTile;
-	private int colOfEmptyTile;
 	private int manhattanDistance;
-	private String direction;
+	private Tile emptyTile;
+	private Direction direction;
 	
-	public Board(int size, int xOfEmptyTile, int yOfEmptyTile) {//вика се с goalCoordinates на 0-лата и за конструиране на goal
+	public Board(int size, Tile emptyTile) {//вика се с goalCoordinates на 0-лата и за конструиране на goal
 		this.size = size;
+		this.emptyTile = emptyTile;
 		this.board = new int[this.size][this.size];
 		int number = 1;
 		for(int i = 0; i < this.size; i++) {
 			for(int j = 0; j < this.size; j++) {
-				if(i == xOfEmptyTile && j == yOfEmptyTile) {
+				if(i == this.emptyTile.getRow() && j == this.emptyTile.getCol()) {
 					this.board[i][j] = 0;
 				} else {
 					this.board[i][j] = number;
@@ -24,12 +26,10 @@ public class Board {
 				}
 			}
 		}
-		this.rowOfEmptyTile = xOfEmptyTile;
-		this.colOfEmptyTile = yOfEmptyTile;
-		this.manhattanDistance = 0;
+		this.manhattanDistance = MANHATTAN_DISTANCE_OF_GOAL;
 	}
 	
-	public Board(int[][] board, int size, int xOfEmptyTile, int yOfEmptyTile, String direction) {
+	public Board(int[][] board, int size, Tile emptyTile, Direction direction) {
 		this.size = size;
 		this.board = new int[this.size][this.size];
 		for(int i = 0; i < this.size; i++) {
@@ -37,26 +37,25 @@ public class Board {
 				this.board[i][j] = board[i][j];
 			}
 		}
-		this.rowOfEmptyTile = xOfEmptyTile;
-		this.colOfEmptyTile = yOfEmptyTile;
+		this.emptyTile = emptyTile;
 		this.direction = direction;
 		this.manhattanDistance = manhattanDistance();
 	}
 	
 	public Board moveEmptyTileDown() {
-		return moveTile(rowOfEmptyTile + 1, colOfEmptyTile, "up");
+		return moveTile(new Tile(emptyTile.getRow() + 1, emptyTile.getCol()), Direction.UP);
 	}
 	
 	public Board moveEmptyTileUp() {
-		return moveTile(rowOfEmptyTile - 1, colOfEmptyTile, "down");
+		return moveTile(new Tile(emptyTile.getRow() - 1, emptyTile.getCol()), Direction.DOWN);
 	}
 	
 	public Board moveEmptyTileLeft() {
-		return moveTile(rowOfEmptyTile, colOfEmptyTile - 1, "right");
+		return moveTile(new Tile(emptyTile.getRow(), emptyTile.getCol() - 1), Direction.RIGHT);
 	}
 	
 	public Board moveEmptyTileRight() {
-		return moveTile(rowOfEmptyTile, colOfEmptyTile + 1, "left");
+		return moveTile(new Tile(emptyTile.getRow(), emptyTile.getCol() + 1), Direction.LEFT);
 	}
 	
 	public int getManhattanDistance() {
@@ -84,7 +83,10 @@ public class Board {
 		System.out.println("- - -");
 	}
 	
-	
+
+	public Direction getDirection() {
+		return this.direction;
+	}
 
 	@Override
 	public int hashCode() {
@@ -108,27 +110,24 @@ public class Board {
 		return true;
 	}
 
-	public String getDirection() {
-		return this.direction;
-	}
 	
-	private Board moveTile(int newX, int newY, String direction) {
-		if(newX >= 0 && newY >= 0 && newX < this.size && newY < this.size) {
-			return new Board(generateChild(newX, newY), this.size, newX, newY, direction);
+	private Board moveTile(Tile newEmptyTile, Direction direction) {
+		if(newEmptyTile.getRow() >= 0 && newEmptyTile.getCol() >= 0 && newEmptyTile.getRow() < this.size && newEmptyTile.getCol() < this.size) {
+			return new Board(generateChild(newEmptyTile), this.size, newEmptyTile, direction);
 		}
 		return null;
 	}
 	
-	private int[][] generateChild(int xOfEmptyTile, int yOfEmptyTile){
+	private int[][] generateChild(Tile emptyTile){
 		int[][] childBoard = new int[this.size][this.size];
 		for(int i = 0; i < this.size; i++) {
 			for(int j = 0; j < this.size; j++) {
 				childBoard[i][j] = this.board[i][j];
 			}
 		}
-		int temp = this.board[xOfEmptyTile][yOfEmptyTile];
-		childBoard[xOfEmptyTile][yOfEmptyTile] = 0;
-		childBoard[this.rowOfEmptyTile][this.colOfEmptyTile] = temp;
+		int temp = this.board[emptyTile.getRow()][emptyTile.getCol()];
+		childBoard[emptyTile.getRow()][emptyTile.getCol()] = 0;
+		childBoard[this.emptyTile.getRow()][this.emptyTile.getCol()] = temp;
 		return childBoard;
 	}
 	

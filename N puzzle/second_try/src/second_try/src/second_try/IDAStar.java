@@ -18,9 +18,9 @@ public class IDAStar {
 		this.result = new ArrayDeque<>();
 		int size = (int)Math.sqrt(N+1);
 		if(goalIndex == -1) {
-			this.goal = new Board((int)Math.sqrt(N + 1), size - 1, size - 1);
+			this.goal = new Board(size, new Tile(size - 1, size - 1));
 		} else {
-			this.goal = new Board((int)Math.sqrt(N + 1), goalRow(goalIndex, size), goalCol(goalIndex, size));
+			this.goal = new Board(size, new Tile(goalRow(goalIndex, size), goalCol(goalIndex, size)));
 		}
 	}
 	
@@ -35,26 +35,23 @@ public class IDAStar {
 		return minimalPathSize;
 	}
 	
-	public void result() {
+	public void printResult() {
 		System.out.println(minimalPathSize);
 		while(!result.isEmpty()) {
-			String direction = result.pop().getDirection();
-			if(!direction.equals("start")) {
-				System.out.println(direction);
+			Direction direction = result.pop().getDirection();
+			if(direction != null) {
+				System.out.println(direction.toString());
 			}
 		}
 	}
 	
 	private int search(int currentPathCost, int threshold) {
 		Board current = path.peek();
-//		current.print();
 		int totalPathCost = currentPathCost + current.getManhattanDistance();
 		if(totalPathCost > threshold) {
 			return totalPathCost;
 		}
 		if(current.isEqualTo(goal)) {
-//			minimalPathSize = path.size() - 1;
-//			result = path.
 			setResult();
 			return FOUND;
 		}
