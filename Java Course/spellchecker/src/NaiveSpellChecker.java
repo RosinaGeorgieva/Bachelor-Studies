@@ -8,37 +8,51 @@ import similarwords.SimilarWordsDictionary;
 import dictionaries.StopWordsDictionary;
 import output.*;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class NaiveSpellChecker implements SpellChecker {
-    private final MainDictionary dictionary;
-    private final StopWordsDictionary stopWordsDictionary;
+    private MainDictionary dictionary;
+    private StopWordsDictionary stopWordsDictionary;
+    private SimilarWordsDictionary similarWordsDictionary;
 
     public NaiveSpellChecker(Reader dictionaryReader, Reader stopwordsReader) {
         dictionary = new MainDictionary(dictionaryReader, DictionaryType.MAIN_DICTIONARY);
         stopWordsDictionary = new StopWordsDictionary(stopwordsReader, DictionaryType.STOP_WORDS_DICTIONARY);
+        similarWordsDictionary = new SimilarWordsDictionary();
+    }
+
+    public NaiveSpellChecker(MainDictionary dictionary, StopWordsDictionary stopWordsDictionary, SimilarWordsDictionary similarWordsDictionary){
+        this.dictionary = dictionary;
+        this.stopWordsDictionary = stopWordsDictionary;
+        this.similarWordsDictionary = similarWordsDictionary;
     }
 
     @Override
     public void analyze(Reader textReader, Writer output, int suggestionsCount) throws IOException { //za vseki analiz nov set ot greshki
-        Set<Mistake> mistakes = MistakeInspector.inspect(textReader, dictionary, stopWordsDictionary);
+        String text = new BufferedReader(textReader).lines().collect(Collectors.joining());
+        Set<Mistake> mistakes = MistakeInspector.inspect(text, dictionary, stopWordsDictionary);
         for (Mistake mistake : mistakes) {
-            SimilarWordsDictionary.getNMostSimilar(mistake.word(), suggestionsCount, dictionary); //tuk veche sme si slojili predlojeniqta v map-a
+            similarWordsDictionary.getNMostSimilar(mistake.word(), suggestionsCount, dictionary); //tuk veche sme si slojili predlojeniqta v map-a
         }
-        SpellcheckOutputFormatter.generate(new SpellcheckOutput(textReader, metadata(textReader), mistakes, SimilarWordsDictionary.getSimilarByCoefficientByWord()), suggestionsCount, output);
+        Metadata metadata = MetadataGenerator.generate(text, dictionary, stopWordsDictionary);
+        SpellcheckOutput spellcheckOutput = new SpellcheckOutput(text, metadata, mistakes, similarWordsDictionary.getSimilarByCoefficientByWord());
+        SpellcheckOutputFormatter.generate(spellcheckOutput, suggestionsCount, output, dictionary, similarWordsDictionary);
+        //textReader close?
     }
 
     @Override
-    public Metadata metadata(Reader textReader) throws IOException {
-        return MetadataGenerator.generate(textReader, dictionary, stopWordsDictionary);
+    public Metadata metadata(Reader textReader) {
+        String text = new BufferedReader(textReader).lines().collect(Collectors.joining());
+        return MetadataGenerator.generate(text, dictionary, stopWordsDictionary);
+        //textReader close?
     }
 
     @Override
     public List<String> findClosestWords(String word, int n) {
-        return SimilarWordsDictionary.getNMostSimilar(word, n, dictionary);
+        return similarWordsDictionary.getNMostSimilar(word, n, dictionary);
     }
 }
 

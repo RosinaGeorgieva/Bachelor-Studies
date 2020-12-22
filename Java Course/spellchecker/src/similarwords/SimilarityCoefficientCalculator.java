@@ -1,5 +1,6 @@
 package similarwords;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.Map;
 
 public class SimilarityCoefficientCalculator {
     public static SimilarityCoefficient calculate(String firstWord, String secondWord) {
-        return new SimilarityCoefficient(cosSimilarity(firstWord, secondWord));
+        return new SimilarityCoefficient(Math.round(cosSimilarity(firstWord, secondWord) * 100.0) / 100.0);
     }
 
     private static Double cosSimilarity(String firstWord, String secondWord) {
@@ -31,9 +32,9 @@ public class SimilarityCoefficientCalculator {
     private static Double vectorLength(Map<String, Integer> vector) {
         Double length = Double.valueOf(0);
         for (String twoGram : vector.keySet()) {
-            length += vector.get(twoGram) * 2;
+            length += Math.pow(vector.get(twoGram), 2);
         }
-        return length;
+        return Math.sqrt(length);
     }
 
     private static Map<String, Integer> vectorRepresentation(String word) {
@@ -51,7 +52,7 @@ public class SimilarityCoefficientCalculator {
 
     private static List<String> getTwoGrams(String word) {
         List<String> twoGrams = new ArrayList<>();
-        for (int i = 0; i < word.length() - 2; i++) { //vj dokude ti se wyrti cikyla
+        for (int i = 0; i < word.length() - 1; i++) { //vj dokude ti se wyrti cikyla
             twoGrams.add(word.substring(i, i + 2));
         }
         return twoGrams;

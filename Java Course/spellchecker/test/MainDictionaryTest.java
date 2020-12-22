@@ -25,6 +25,7 @@ public class MainDictionaryTest {
 
     private static final Set<String> EXPECTED_WORDS = Set.of("hello", "world", "mountain", "cat", "amazing");
     private static final Reader INPUT_READER = new StringReader(SAMPLE_DICTIONARY);
+
     private static Dictionary dictionary;
 
     @BeforeClass

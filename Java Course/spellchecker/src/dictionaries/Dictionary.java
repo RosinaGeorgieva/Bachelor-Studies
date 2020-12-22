@@ -1,16 +1,12 @@
 package dictionaries;
 
-import wordcleanser.WordNormalizer;
-
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.Reader;
 import java.util.HashSet;
 import java.util.Set;
 
 public abstract class Dictionary {
-    protected Set<String> words; //FINAL??
-    protected DictionaryType type;
+    protected Set<String> words;
+    protected final DictionaryType type;
 
     public Dictionary(Reader text, DictionaryType type){
         this.type = type;
@@ -18,23 +14,7 @@ public abstract class Dictionary {
         this.compose(text);
     }
 
-    protected void compose(Reader text) {
-        try(var bufferedReader = new BufferedReader(text)){
-            String wordPerLine;
-
-            while((wordPerLine = bufferedReader.readLine()) != null){
-                wordPerLine = WordNormalizer.normalize(wordPerLine);
-
-                if(!isShort(wordPerLine) && this.type == DictionaryType.MAIN_DICTIONARY) {
-                    words.add(wordPerLine);
-                }
-            }
-
-        } catch (IOException exception){
-
-            //...
-        }
-    }
+    protected abstract void compose(Reader text);
 
     public Set<String> getWords(){
         return this.words;

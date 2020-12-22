@@ -49,7 +49,7 @@ public class MistakeInspectorTest { //!!! da naprawq konsistentni testobete; obr
         when(stopWordsDictionary.contains(MISTAKEN_WORD)).thenReturn(false);
         when(stopWordsDictionary.contains(STOP_WORD)).thenReturn(true);
 
-        assertEquals(expectedMistakes, MistakeInspector.inspect(inputReader, mainDictionary, stopWordsDictionary));
+        assertEquals(expectedMistakes, MistakeInspector.inspect(MISTAKEN_INPUT, mainDictionary, stopWordsDictionary));
     }
 
     @Test
@@ -61,6 +61,20 @@ public class MistakeInspectorTest { //!!! da naprawq konsistentni testobete; obr
         when(stopWordsDictionary.contains(CORRECT_WORD)).thenReturn(false);
         when(stopWordsDictionary.contains(STOP_WORD)).thenReturn(true);
 
-        assertEquals(noMistakes, MistakeInspector.inspect(inputReader, mainDictionary, stopWordsDictionary));
+        assertEquals(noMistakes, MistakeInspector.inspect(CORRECT_INPUT, mainDictionary, stopWordsDictionary));
+    }
+
+    @Test
+    public void testOnlyAlphaNumericals(){
+        Reader inputReader = new StringReader("neshto -**% tuk");
+
+        when(mainDictionary.contains("neshto")).thenReturn(true);
+        when(mainDictionary.contains("-**%")).thenReturn(false);
+        when(mainDictionary.contains("tuk")).thenReturn(false);
+        when(stopWordsDictionary.contains("neshto")).thenReturn(false);
+        when(stopWordsDictionary.contains("-**%")).thenReturn(false);
+        when(stopWordsDictionary.contains("tuk")).thenReturn(true);
+
+        assertEquals(noMistakes, MistakeInspector.inspect("neshto -**% tuk", mainDictionary, stopWordsDictionary));
     }
 }

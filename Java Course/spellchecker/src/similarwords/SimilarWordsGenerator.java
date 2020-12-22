@@ -6,8 +6,8 @@ import java.util.*;
 
 public class SimilarWordsGenerator {
     public static TreeMap<SimilarityCoefficient, ArrayList<String>> generate(String word, Dictionary dictionary){ //da q poopvawq tazi funkciq
-        Collection<String> wordsFromDictionary = dictionary.getWords();
         TreeMap<SimilarityCoefficient, ArrayList<String>> wordsBySimilarityCoefficient = new TreeMap<>();
+        Collection<String> wordsFromDictionary = dictionary.getWords();
         for(String wordFromDictionary : wordsFromDictionary){
             SimilarityCoefficient similarityCoefficient = SimilarityCoefficientCalculator.calculate(word, wordFromDictionary);
             if(wordsBySimilarityCoefficient.containsKey(similarityCoefficient)){

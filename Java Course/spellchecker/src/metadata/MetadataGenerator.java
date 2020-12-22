@@ -3,38 +3,49 @@ package metadata;
 import dictionaries.Dictionary;
 import wordcleanser.WordNormalizer;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.Reader;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-public class MetadataGenerator {
-    public static Metadata generate(Reader textReader, Dictionary dictionary, Dictionary stopWordsDictionary) {
+public class MetadataGenerator { // ne e minal prez stream api refactoring
+    public static Metadata generate(String text, Dictionary dictionary, Dictionary stopWordsDictionary) {
+
         int characterCount = 0;
         int wordCount = 0;
         int mistakesCount = 0;
-        try (var bufferedReader = new BufferedReader(textReader)) {
-            String line;
 
-            while ((line = bufferedReader.readLine()) != null) {
-                String[] words = WordNormalizer.removeAllWhitespaces(line);
-                for (String word : words) {
-                    word = WordNormalizer.makeCaseInsensitive(word);
-                    characterCount += word.length();
+        Set<String[]> lines = text.lines().map(WordNormalizer::removeAllWhitespaces).collect(Collectors.toSet());
 
-                    word = WordNormalizer.removeBorderNonAlphanumeric(word);
+        for (String[] line : lines) {
+            for (String word : line) {
+                word = WordNormalizer.makeCaseInsensitive(word);
 
-                    if(!stopWordsDictionary.contains(word)){
-                        wordCount++;
-                    }
-                    if(!dictionary.contains(word) && !stopWordsDictionary.contains(word)){
-                        mistakesCount++;
-                    }
-                }
+                characterCount += countCharacters(word);
+
+                word = WordNormalizer.removeBorderNonAlphanumeric(word);
+
+                wordCount += countWord(word, stopWordsDictionary);
+                mistakesCount += countMistakes(word, dictionary, stopWordsDictionary);
             }
-
-            return new Metadata(characterCount, wordCount, mistakesCount);
-        } catch (IOException exception) {
-            return null;
         }
+
+        return new Metadata(characterCount, wordCount, mistakesCount);
+    }
+
+    private static int countCharacters(String word) {
+        return word.length();
+    }
+
+    private static int countWord(String word, Dictionary stopWordsDictionary) {
+        if (!stopWordsDictionary.contains(word)) {
+            return 1;
+        }
+        return 0;
+    }
+
+    private static int countMistakes(String word, Dictionary dictionary, Dictionary stopWordsDictionary) {
+        if (!dictionary.contains(word) && !stopWordsDictionary.contains(word)) {
+            return 1;
+        }
+        return 0;
     }
 }

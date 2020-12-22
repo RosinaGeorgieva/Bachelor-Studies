@@ -10,5 +10,5 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-public record SpellcheckOutput(Reader text, Metadata metadata, Set<Mistake> mistakes, Map<String, TreeMap<SimilarityCoefficient, ArrayList<String>>> suggestionsByWord) { }
+public record SpellcheckOutput(String text, Metadata metadata, Set<Mistake> mistakes, Map<String, TreeMap<SimilarityCoefficient, ArrayList<String>>> suggestionsByWord) { }
 
