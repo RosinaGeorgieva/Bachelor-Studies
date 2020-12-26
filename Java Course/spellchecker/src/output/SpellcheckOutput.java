@@ -1,14 +1,11 @@
 package output;
 
-import metadata.Metadata;
 import mistake.Mistake;
-import similarwords.SimilarityCoefficient;
+import spellchecker.Metadata;
 
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
-public record SpellcheckOutput(String text, Metadata metadata, Set<Mistake> mistakes, Map<String, TreeMap<SimilarityCoefficient, ArrayList<String>>> suggestionsByWord) { }
+public record SpellcheckOutput(String text, Metadata metadata, List<Mistake> mistakes,
+                               Map<String, ArrayList<String>> suggestionsByWord) {
+}
 

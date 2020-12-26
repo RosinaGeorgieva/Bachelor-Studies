@@ -1,10 +1,6 @@
 package similarwords;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SimilarityCoefficientCalculator {
     public static SimilarityCoefficient calculate(String firstWord, String secondWord) {
@@ -20,39 +16,25 @@ public class SimilarityCoefficientCalculator {
     }
 
     private static Double vectorProduct(Map<String, Integer> firstVector, Map<String, Integer> secondVector) {
-        Double product = Double.valueOf(0);
-        for (String twoGram : firstVector.keySet()) {
-            if (secondVector.containsKey(twoGram)) {
-                product += firstVector.get(twoGram) * secondVector.get(twoGram);
-            }
-        }
-        return product;
+        return firstVector.keySet().stream().filter(key -> secondVector.containsKey(key))
+                .mapToDouble(key -> firstVector.get(key) * secondVector.get(key))
+                .sum();
     }
 
     private static Double vectorLength(Map<String, Integer> vector) {
-        Double length = Double.valueOf(0);
-        for (String twoGram : vector.keySet()) {
-            length += Math.pow(vector.get(twoGram), 2);
-        }
-        return Math.sqrt(length);
+        return Math.sqrt(vector.values().stream().mapToDouble(occurrence -> Math.pow(occurrence, 2)).sum());
     }
 
     private static Map<String, Integer> vectorRepresentation(String word) {
-        Map<String, Integer> vector = new HashMap<>(); //imeto na vector e tupo
-        List<String> twoGrams = getTwoGrams(word);
-        for (String twoGram : twoGrams) {
-            if (vector.containsKey(twoGram)) {
-                vector.put(twoGram, vector.get(twoGram) + 1);
-            } else {
-                vector.put(twoGram, 1);
-            }
-        }
-        return vector;
+        Map<String, Integer> twoGramsVector = new HashMap<>();
+        getTwoGrams(word).stream().filter(twoGram -> twoGramsVector.containsKey(twoGram)).forEach(twoGram -> twoGramsVector.put(twoGram, twoGramsVector.get(twoGram) + 1));
+        getTwoGrams(word).stream().filter(twoGram -> !twoGramsVector.containsKey(twoGram)).forEach(twoGram -> twoGramsVector.put(twoGram, 1));
+        return twoGramsVector;
     }
 
-    private static List<String> getTwoGrams(String word) {
+    private static Collection<String> getTwoGrams(String word) {
         List<String> twoGrams = new ArrayList<>();
-        for (int i = 0; i < word.length() - 1; i++) { //vj dokude ti se wyrti cikyla
+        for (int i = 0; i < word.length() - 1; i++) {
             twoGrams.add(word.substring(i, i + 2));
         }
         return twoGrams;

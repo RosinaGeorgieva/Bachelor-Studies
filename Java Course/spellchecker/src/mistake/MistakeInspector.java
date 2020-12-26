@@ -1,28 +1,26 @@
 package mistake;
 
-import dictionaries.Dictionary;
-import wordcleanser.WordNormalizer;
+import dictionaries.AbstractDictionary;
+import util.SentenceDivider;
+import util.WordStripper;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
-//kak moga da go napravq izcqlo sus stream api
-public class MistakeInspector {//da mahna hardcode-natitie neshta
-    public static Set<Mistake> inspect(String text, Dictionary dictionary, Dictionary stopWordsDictionary) {
-        Set<String[]> lines = text.lines().map(WordNormalizer::removeAllWhitespaces).collect(Collectors.toSet());
-        Set<Mistake> mistakes = new HashSet<>();
-        int lineNumber = 1;
-        for (String[] line : lines) {
-            Set<String> words = Arrays.stream(line).distinct().map(WordNormalizer::normalize)
-                    .filter(word -> !word.equals(""))
+public class MistakeInspector {
+    public static Collection<Mistake> inspect(String text, AbstractDictionary dictionary, AbstractDictionary stopWordsDictionary) {
+        List<String[]> textLines = text.lines().map(SentenceDivider::divide).collect(Collectors.toList());
+
+        int lineCounter = 1;
+        List<Mistake> mistakes = new ArrayList<>();
+        for (String[] line : textLines) {
+            final int currentLineNumber = lineCounter;
+            Arrays.stream(line).distinct().map(WordStripper::strip)
+                    .filter(word -> word.length() != 0)
                     .filter(word -> !dictionary.contains(word))
-                    .filter(word -> !stopWordsDictionary.contains(word)).collect(Collectors.toSet());
-            for (String word : words) {
-                mistakes.add(new Mistake(lineNumber, word));
-            }
-            lineNumber++;
+                    .filter(word -> !stopWordsDictionary.contains(word)).collect(Collectors.toSet())
+                    .forEach(word -> mistakes.add(new Mistake(currentLineNumber, word)));
+            lineCounter++;
         }
         return mistakes;
     }

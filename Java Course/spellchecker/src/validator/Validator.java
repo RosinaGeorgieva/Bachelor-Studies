@@ -11,7 +11,7 @@ public class Validator {
 
     public static void checkNegative(int n) {
         if (n < 0) {
-            throw new IllegalArgumentException(Exceptions.NEGATIVE_SIZE_EXCEPTION.getMessage());
+            throw new IllegalArgumentException(Exceptions.NEGATIVE_COUNT_EXCEPTION.getMessage());
         }
     }
 }
