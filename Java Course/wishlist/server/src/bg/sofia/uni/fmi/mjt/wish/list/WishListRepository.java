@@ -14,6 +14,7 @@ public class WishListRepository {
     private static final String NO_STUDENTS_IN_LIST_MESSAGE_FORMAT = "[ There are no students present in the wish list ]%s";
     private static final String WISH_LIST_FORMAT = "[ %s: %s ]%s";
     private static final String LINE_SEPARATOR = System.lineSeparator();
+
     private static final Map<String, Set<Wish>> WISHES_BY_STUDENT = new HashMap<>();
 
     public String postWish(String student, Wish wish) { //omesena e logikata mnogo

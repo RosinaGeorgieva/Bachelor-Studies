@@ -9,7 +9,6 @@ import java.nio.channels.SocketChannel;
 import java.util.Scanner;
 
 public class WishListClient {
-
     private static final int SERVER_PORT = 7777;
 
     public static void main(String[] args) { //da si izvadq konstantite w nqkakyw klas s message-i;
@@ -27,7 +26,7 @@ public class WishListClient {
 
                 if ("disconnect".equals(message)) {
                     break;
-                }
+                } //ne biiva da moga da teglq sebe si!!!
 
                 writer.println(message);
 
@@ -37,8 +36,7 @@ public class WishListClient {
                 System.out.println(reply);
             }
         } catch (IOException e) {
-            System.out.println("There is a problem with the network communication");
-            e.printStackTrace();
+            System.out.println("[ There is a problem with the server connection ]");
         }
     }
 }
