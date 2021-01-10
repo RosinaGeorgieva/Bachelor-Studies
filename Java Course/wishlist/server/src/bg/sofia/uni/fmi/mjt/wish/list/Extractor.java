@@ -10,8 +10,8 @@ public class Extractor {
         return extractIthWordFrom(request, 0);
     }
 
-    public static String extractName(String request) throws NotEnoughArgumentsException {
-        return extractIthWordFrom(request, 1);
+    public static User extractUser(String request) throws NotEnoughArgumentsException {
+        return new User(extractIthWordFrom(request, 1));
     }
 
     public static Wish extractWish(String request) throws NotEnoughArgumentsException {

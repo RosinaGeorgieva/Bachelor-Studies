@@ -15,44 +15,52 @@ public class WishListRepository {
     private static final String WISH_LIST_FORMAT = "[ %s: %s ]%s";
     private static final String LINE_SEPARATOR = System.lineSeparator();
 
-    private static final Map<String, Set<Wish>> WISHES_BY_STUDENT = new HashMap<>();
+    private static final Map<User, Set<Wish>> wishesByUser = new HashMap<>(); //by user da gi napravq vmesto by string
 
-    public String postWish(String student, Wish wish) { //omesena e logikata mnogo
-        if (WISHES_BY_STUDENT.containsKey(student)) {
-            Set<Wish> wishesForThisStudent = WISHES_BY_STUDENT.get(student);
+    public String postWish(User user, Wish wish) { //omesena e logikata mnogo
+        if (wishesByUser.containsKey(user)) {
+            Set<Wish> wishesForThisStudent = wishesByUser.get(user);
             if (wishesForThisStudent.contains(wish)) {
-                return String.format(WISH_ALREADY_SUBMITTED_MESSAGE_FORMAT, student, LINE_SEPARATOR);
-            } else {
-                wishesForThisStudent.add(wish);
-                return String.format(WISH_SUCCESSFULLY_SUBMITTED_MESSAGE_FORMAT, wish, student, LINE_SEPARATOR);
+                return String.format(WISH_ALREADY_SUBMITTED_MESSAGE_FORMAT, user, LINE_SEPARATOR);
             }
-        } else {
-            WISHES_BY_STUDENT.put(student, new HashSet<>(Set.of(wish)));
-            return String.format(WISH_SUCCESSFULLY_SUBMITTED_MESSAGE_FORMAT, wish, student, LINE_SEPARATOR);
+            wishesForThisStudent.add(wish);
+            return String.format(WISH_SUCCESSFULLY_SUBMITTED_MESSAGE_FORMAT, wish, user, LINE_SEPARATOR);
         }
+
+        wishesByUser.put(user, new HashSet<>(Set.of(wish)));
+        return String.format(WISH_SUCCESSFULLY_SUBMITTED_MESSAGE_FORMAT, wish, user, LINE_SEPARATOR);
     }
 
-    public String getRandomWishList() {
-        if (WISHES_BY_STUDENT.size() == 0) {
+    public String getRandomWishList(Integer sessionId) {
+        if (wishesByUser.size() == 0) {
             return String.format(NO_STUDENTS_IN_LIST_MESSAGE_FORMAT, LINE_SEPARATOR);
         }
+        try {
+            User chosenStudent = randomGiftRecipientFor(SessionsRepository.getUserOf(sessionId));
+            String wishList = getWishListFor(chosenStudent);
 
-        String chosenStudent = randomStudent();
-        String wishList = getWishListFor(chosenStudent);
-
-        WISHES_BY_STUDENT.remove(chosenStudent);
-        return wishList;
+            wishesByUser.remove(chosenStudent);
+            return wishList;
+        } catch (NoUsersAvailableException exception) {
+            return String.format(NO_STUDENTS_IN_LIST_MESSAGE_FORMAT, LINE_SEPARATOR);
+        }
     }
 
-    private String randomStudent() {
-        int randomNumber = ThreadLocalRandom.current().nextInt(0, WISHES_BY_STUDENT.size());
-        List<String> students = new ArrayList<>(WISHES_BY_STUDENT.keySet());
-        return students.get(randomNumber);
+    private User randomGiftRecipientFor(User user) throws NoUsersAvailableException {
+        List<User> users = new ArrayList<>(wishesByUser.keySet());
+        if (users.size() == 1 && users.contains(user)) {
+            throw new NoUsersAvailableException(NO_STUDENTS_IN_LIST_MESSAGE_FORMAT);
+        }
+
+        int randomNumber = ThreadLocalRandom.current().nextInt(0, wishesByUser.size());
+        User randomUser = users.get(randomNumber);
+
+        return randomUser;
     }
 
-    private String getWishListFor(String student) {
-        Set<Wish> wishes = WISHES_BY_STUDENT.get(student);
-        String message = String.format(WISH_LIST_FORMAT, student, wishes.toString(), LINE_SEPARATOR);
+    private String getWishListFor(User user) {
+        Set<Wish> wishes = wishesByUser.get(user);
+        String message = String.format(WISH_LIST_FORMAT, user, wishes.toString(), LINE_SEPARATOR);
         return message;
     }
 }

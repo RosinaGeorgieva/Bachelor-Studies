@@ -5,6 +5,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -22,40 +23,82 @@ public class WishListServer {
     private static final String LOGOUT = "logout";
     private static final String POST_WISH = "post-wish";
     private static final String GET_WISH = "get-wish";
-    private static final String DISCONNECT = "disconnect"; //da napravq ot tuk da se disconnectva vmesto ok klienta
+    private static final String DISCONNECT = "disconnect";
 
     private static final String LINE_SEPARATOR = System.lineSeparator();
     private static final String SERVER_CONNECTION_PROBLEM_MESSAGE = "[ There is a problem with the server connection ]" + LINE_SEPARATOR;
     private static final String UKNOWN_COMMAND_MESSAGE = "[ Unknown command ]" + LINE_SEPARATOR;
+    private static final String NOT_ENOUGH_ARGUMENTS_EXCEPTION_MESSAGE = "[ Too few arguments provided. ]" + LINE_SEPARATOR;
     private static final String AUTH_REQUEST_FORMAT = "%d %s";
+    private static final String DISCONNECTED_FROM_SERVER = "[ Disconnected from server ]" + LINE_SEPARATOR;
     private static final String OK = "-*&OK&*-" + LINE_SEPARATOR;
 
     private static final WishListRepository wishList = new WishListRepository();
     private static int serverPort = 7777;
-    private static Integer clientId = 0; //HMM??
+    private static Integer sessionId = 0;
+
+    private static ServerSocketChannel serverSocketChannel; //DA MAHNA STATIC!!!
+    private static Selector selector;//hmm static?
+    private static SocketChannel socketChannel;
+    private static Reader reader;
+    private static Writer writer;
+    private static boolean shouldRun = true;
+
+    private static Set<SocketChannel> clients = new HashSet<>();
 
     public WishListServer(int serverPort) {
         this.serverPort = serverPort;
     }
 
     public static void main(String[] args) {
-        try (ServerSocketChannel serverSocketChannel = ServerSocketChannel.open()) {
+        start();
+    }
+
+    public static void start() { //da mahna static
+        try {
+            shouldRun = true;
+
+            serverSocketChannel = ServerSocketChannel.open();
+            socketChannel = SocketChannel.open();
+            reader = new BufferedReader(Channels.newReader(socketChannel, CHARSET));
+            writer = new PrintWriter(Channels.newWriter(socketChannel, CHARSET), true);
+
             serverSocketChannel.bind(new InetSocketAddress(SERVER_HOST, serverPort));
             serverSocketChannel.configureBlocking(false);
-
-            Selector selector = Selector.open();
+            selector = Selector.open();
             serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
-
-            ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
-
-            SocketChannel socketChannel = SocketChannel.open();
-            BufferedReader reader = new BufferedReader(Channels.newReader(socketChannel, CHARSET));
-            PrintWriter writer = new PrintWriter(Channels.newWriter(socketChannel, CHARSET), true);
-
             socketChannel.connect(new InetSocketAddress(SERVER_HOST, AUTH_SERVER_PORT));
 
-            //SERVER KOD
-            while (true) {
+            run();
+
+        } catch (IOException exception) {
+            System.out.println(SERVER_CONNECTION_PROBLEM_MESSAGE);
+            exception.printStackTrace();
+        }
+    }
+
+    public static void stop() {
+        try {
+            shouldRun = false;
+            reader.close();
+            writer.close();
+            socketChannel.close();
+            for (SocketChannel client : clients) {
+                client.close();
+            }
+            selector.close();
+            serverSocketChannel.close();
+        } catch (IOException exception) {
+            System.out.println(SERVER_CONNECTION_PROBLEM_MESSAGE);
+            exception.printStackTrace();
+        }
+    }
+
+    public static void run() {
+        try {
+            ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+
+            while (shouldRun) {
                 int readyChannels = selector.select();
                 if (readyChannels == 0) {
                     continue;
@@ -79,51 +122,59 @@ public class WishListServer {
                         buffer.flip();
 
                         String request = new String(buffer.array(), 0, buffer.limit());
-
-                        String authRequest = addClientIdToRequest(currentClientId(key), request);
-                        String authResponse = requestAuthentication(authRequest, reader, writer);
-
-                        String response;
-                        if (!authResponse.equals(OK)) {
-                            response = authResponse;
-                        } else {
-                            response = process(request);
-                        }
+                        String response = processRequest((Integer) key.attachment(), request, reader, writer);
 
                         buffer.clear();
                         buffer.put(response.getBytes(StandardCharsets.UTF_8));
-
                         buffer.flip();
                         sc.write(buffer);
 
                     } else if (key.isAcceptable()) {
                         ServerSocketChannel sockChannel = (ServerSocketChannel) key.channel();
                         SocketChannel accept = sockChannel.accept();
+                        clients.add(accept);
                         accept.configureBlocking(false);
-                        accept.register(selector, SelectionKey.OP_READ).attach(clientId);
-                        clientId++;
+                        accept.register(selector, SelectionKey.OP_READ).attach(sessionId);
+                        sessionId++;
                     }
                     keyIterator.remove();
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException exception) {
             System.out.println(SERVER_CONNECTION_PROBLEM_MESSAGE);
+            exception.printStackTrace();
         }
     }
 
-    private static String process(String request) {
+    private static String processRequest(Integer sessionId, String request, Reader reader, Writer writer) {
         try {
             String command = Extractor.extractCommand(request);
-            if (command.equals("post-wish")) {
-                String name = Extractor.extractName(request);
-                Wish wish = Extractor.extractWish(request);
-                return wishList.postWish(name, wish);
-            } else if (command.equals("get-wish")) {
-                return wishList.getRandomWishList();
+            String authenticationResponse = requestAuthentication(addSessionIdToRequest(sessionId, request), reader, writer);
+            switch (command) {
+                case REGISTER:
+                case LOGIN:
+                    SessionsRepository.add(sessionId, Extractor.extractUser(request));
+                    return authenticationResponse;
+                case LOGOUT:
+                    SessionsRepository.remove(sessionId);
+                    return authenticationResponse;
+                case POST_WISH:
+                    if (!authenticationResponse.equals(OK)) {
+                        return authenticationResponse;
+                    }
+                    return wishList.postWish(Extractor.extractUser(request), Extractor.extractWish(request));
+                case GET_WISH:
+                    if (!authenticationResponse.equals(OK)) {
+                        return authenticationResponse;
+                    }
+                    return wishList.getRandomWishList(sessionId);
+                case DISCONNECT:
+                    return DISCONNECTED_FROM_SERVER;
+                default:
+                    return UKNOWN_COMMAND_MESSAGE;
             }
-            return UKNOWN_COMMAND_MESSAGE;
         } catch (NotEnoughArgumentsException exception) {
-            return exception.getMessage() + System.lineSeparator();
+            return NOT_ENOUGH_ARGUMENTS_EXCEPTION_MESSAGE;
         }
     }
 
@@ -133,29 +184,13 @@ public class WishListServer {
             String reply = ((BufferedReader) reader).readLine();
             writer.flush();
             return reply + System.lineSeparator();
-        } catch (IOException e) {
+        } catch (IOException exception) {
+            exception.printStackTrace();
             return SERVER_CONNECTION_PROBLEM_MESSAGE;
         }
     }
 
-    private static String addClientIdToRequest(Integer clientId, String request) {
+    private static String addSessionIdToRequest(Integer clientId, String request) {
         return String.format(AUTH_REQUEST_FORMAT, clientId, request);
     }
-
-    private static Integer currentClientId(SelectionKey key) {
-        return (Integer) key.attachment();
-    }
-
-//    private static String processRequest(String request) throws NotEnoughArgumentsException {
-//        String command = Extractor.extractCommand(request);
-//        switch(command) {
-//            case REGISTER: return register(request);
-//            case LOGIN: return login(request);
-//            case LOGOUT: return logout(request);
-//            case GET_WISH: return getWish(request);
-//            case POST_WISH: return postWish(request);
-////            case DISCONNECT: return Command.DISCONNECT; //TUK KAKWO?????
-//            default: return UKNOWN_COMMAND_MESSAGE;
-//        }
-//    }
 }

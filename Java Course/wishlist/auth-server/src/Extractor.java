@@ -1,16 +1,11 @@
 public class Extractor {
-    private static final String EXCEPTION_MESSAGE = "[ Too few arguments provided ]";
+    private static final String EXCEPTION_MESSAGE = "[ Too few arguments provided. ]";
     private static final String LINE_SEPARATOR = System.lineSeparator();
     private static final String SPACE = " ";//da pogledna za s+
     private static final String EMPTY_STRING = "";
 
-    //DA SE POGRIJA ZA AKO LIPSVA NQKOI AGRUMENT PRI KOMANDA
-    public static String extractClientId(String request) {
-        try {
-            return extractIthWordFrom(request, 0);
-        } catch (NotEnoughArgumentsException exception) {
-            return exception.getMessage();
-        }
+    public static String extractSessionId(String request) throws NotEnoughArgumentsException {
+        return extractIthWordFrom(request, 0);
     }
 
     public static String extractCommand(String request) throws NotEnoughArgumentsException {
@@ -21,7 +16,7 @@ public class Extractor {
         return extractIthWordFrom(request, 2);
     }
 
-    public static String extractPassword(String request) throws NotEnoughArgumentsException {
+    public static String extractPassword(String request) throws NotEnoughArgumentsException { //ako ima parola e na 2 mqsto;
         return extractIthWordFrom(request, 3);
     }
 

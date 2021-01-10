@@ -1,10 +1,5 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -17,6 +12,12 @@ import java.util.Set;
 public class WishListAuthServer {
     private static final int SERVER_PORT = 7778;
     private static final int BUFFER_SIZE = 1024;
+
+    private static final String REGISTER = "register";
+    private static final String LOGIN = "login";
+    private static final String LOGOUT = "logout";
+    private static final String POST_WISH = "post-wish";
+    private static final String GET_WISH = "get-wish";
 
     public static void main(String[] args) {
         try (ServerSocketChannel serverSocketChannel = ServerSocketChannel.open()) {
@@ -56,7 +57,7 @@ public class WishListAuthServer {
 
                         buffer.clear();
 
-                        Integer clientId = Integer.parseInt(Extractor.extractClientId(request));
+                        Integer clientId = Integer.parseInt(Extractor.extractSessionId(request));
                         String response = respondTo(clientId, request);
                         buffer.put(response.getBytes(StandardCharsets.UTF_8));
 
@@ -74,49 +75,34 @@ public class WishListAuthServer {
                 }
 
             }
-        } catch (IOException e) {
+        } catch (IOException | NotEnoughArgumentsException e) {
             System.out.println("[ There is a problem with the server connection ]");
         }
     }
 
-    private static String respondTo(Integer clientId, String request) {
+    private static String respondTo(Integer sessionId, String request) {
         try {
-            CommandType command = deduceType(Extractor.extractCommand(request));
+            String command = Extractor.extractCommand(request);
+            User user = null;
             switch (command) {
                 case REGISTER:
-                    return UsersRepository.register(clientId, Extractor.extractName(request), Extractor.extractPassword(request));
+                    user = new User(Extractor.extractName(request), Extractor.extractPassword(request));
+                    return UsersRepository.register(sessionId, user);
                 case LOGIN:
-                    return UsersRepository.login(clientId, Extractor.extractName(request), Extractor.extractPassword(request));
+                    user = new User(Extractor.extractName(request), Extractor.extractPassword(request));
+                    return UsersRepository.login(sessionId, user);
                 case LOGOUT:
-                    return UsersRepository.logout(clientId);
-                case CHECK_LOGGED_IN:
-                    return UsersRepository.checkLoggedIn(clientId);
-                case CHECK_EXISTING_USER:
-                    return UsersRepository.checkExistingUser(clientId, Extractor.extractName(request));
+                    return UsersRepository.logout(sessionId);
+                case POST_WISH:
+                    user = new User(Extractor.extractName(request), Extractor.extractPassword(request));
+                    return UsersRepository.allowWishlistSubmition(sessionId, user);
+                case GET_WISH:
+                    return UsersRepository.allowWishlistRetrieval(sessionId);
                 default:
                     return "[ Unknown command ]" + System.lineSeparator();
             }
         } catch (NotEnoughArgumentsException exception) {
             return exception.getMessage() + System.lineSeparator();
         }
-    }
-
-    public static CommandType deduceType(String command) {
-        if(command.equals("register")) {
-            return CommandType.REGISTER;
-        }
-        if(command.equals("login")) {
-            return CommandType.LOGIN;
-        }
-        if(command.equals("logout")) {
-            return CommandType.LOGOUT;
-        }
-        if(command.equals("post-wish")) {
-            return CommandType.CHECK_EXISTING_USER;
-        }
-        if(command.equals("get-wish")) {
-            return CommandType.CHECK_LOGGED_IN;
-        }
-        return CommandType.INVALID_COMMAND;
     }
 }

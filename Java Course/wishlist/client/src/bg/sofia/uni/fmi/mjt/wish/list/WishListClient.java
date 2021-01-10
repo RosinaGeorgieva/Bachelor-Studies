@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 public class WishListClient {
     private static final int SERVER_PORT = 7777;
+    private static final String DISCONNECTED_FROM_SERVER = "[ Disconnected from server ]";
 
     public static void main(String[] args) { //da si izvadq konstantite w nqkakyw klas s message-i;
 
@@ -24,16 +25,16 @@ public class WishListClient {
                 System.out.print("=> ");
                 String message = scanner.nextLine();
 
-                if ("disconnect".equals(message)) {
-                    break;
-                } //ne biiva da moga da teglq sebe si!!!
-
                 writer.println(message);
 
                 String reply = reader.readLine();
                 writer.flush();
 
                 System.out.println(reply);
+
+                if(reply.equals(DISCONNECTED_FROM_SERVER)) {
+                    break;
+                }
             }
         } catch (IOException e) {
             System.out.println("[ There is a problem with the server connection ]");
