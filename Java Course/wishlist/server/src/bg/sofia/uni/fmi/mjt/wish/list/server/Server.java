@@ -1,5 +1,7 @@
 package bg.sofia.uni.fmi.mjt.wish.list.server;
 
+import bg.sofia.uni.fmi.mjt.wish.list.server.exception.ClientDisconnectedException;
+
 import java.io.IOException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.ServerSocketChannel;
@@ -12,7 +14,7 @@ public interface Server {
 
     void receiveConnection(SelectionKey key);
 
-    String receiveRequest(SocketChannel socketChannel) throws IOException; //da go izmislq s drug exception!!! koito ne e checked
+    String receiveRequest(SocketChannel socketChannel) throws IOException, ClientDisconnectedException; //da go izmislq s drug exception!!! koito ne e checked
 
     String sendResponse(SocketChannel socketChannel, String request);
 

@@ -52,7 +52,7 @@ public class WishListAuthenticationServerTest {
     private static final String UNKNOWN_COMMAND = "3 command";
 
     private static final Server server = new WishListAuthenticationServer(SERVER_PORT);
-
+//da gi napravq nezavisimi
     @Test
     public void testProcessRequestRegisterValidUser() {
         assertEquals(SUCCESSFULLY_REGISTERED_MSG, server.processRequest(REGISTER_VALID_USER_1));

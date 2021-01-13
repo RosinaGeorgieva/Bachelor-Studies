@@ -6,11 +6,9 @@ import java.nio.channels.SocketChannel;
 public interface Client {
     void connect();
 
-    String sendRequest(SocketChannel socketChannel);
+    void sendRequest(String request);
 
-    String receiveResponse(SocketChannel socketChannel); //eventualno ot string??
+    String receiveResponse(); //eventualno ot string??
 
     void disconnect();
-
-    void run();
 }

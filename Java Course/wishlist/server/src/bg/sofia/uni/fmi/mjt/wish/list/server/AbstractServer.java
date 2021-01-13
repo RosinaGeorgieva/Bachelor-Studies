@@ -1,5 +1,7 @@
 package bg.sofia.uni.fmi.mjt.wish.list.server;
 
+import bg.sofia.uni.fmi.mjt.wish.list.server.exception.ClientDisconnectedException;
+
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -78,11 +80,12 @@ public abstract class AbstractServer implements Server{
     }
 
     @Override
-    public String receiveRequest(SocketChannel socketChannel) throws IOException {
+    public String receiveRequest(SocketChannel socketChannel) throws IOException, ClientDisconnectedException {
         buffer.clear();
         int r = socketChannel.read(buffer);
         if (r < 0) {
             socketChannel.close();
+            throw new ClientDisconnectedException("nehsto si");
         }
         buffer.flip();
         return new String(buffer.array(), 0, buffer.limit());

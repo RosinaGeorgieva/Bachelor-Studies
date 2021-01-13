@@ -1,6 +1,7 @@
 package bg.sofia.uni.fmi.mjt.wish.list.auth.server;
 
 import bg.sofia.uni.fmi.mjt.wish.list.server.AbstractServer;
+import bg.sofia.uni.fmi.mjt.wish.list.server.exception.ClientDisconnectedException;
 
 import java.io.*;
 import java.nio.channels.*;
@@ -45,7 +46,7 @@ public class WishListAuthenticationServer extends AbstractServer { //da go napra
                         String request;
                         try {
                             request = receiveRequest(sc);
-                        } catch (IOException exception) {
+                        } catch (ClientDisconnectedException exception) {
                             continue;
                         }
                         sendResponse(sc, request);
