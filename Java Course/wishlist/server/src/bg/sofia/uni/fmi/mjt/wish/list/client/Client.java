@@ -8,7 +8,7 @@ public interface Client {
 
     void sendRequest(String request);
 
-    String receiveResponse(); //eventualno ot string??
+    String receiveResponse();
 
     void disconnect();
 }

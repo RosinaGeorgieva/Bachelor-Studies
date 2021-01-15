@@ -9,7 +9,7 @@ import java.nio.channels.SocketChannel;
 import java.util.Scanner;
 
 //list da mi e s glavno L navsqkyde; da probvam v main kak rabotqt
-public class WishListClient extends AbstractClient {
+public class WishListClient extends AbstractClient { //da iztestvam s tozi klient, vmesto s onzi ot drugiq main;
     private static final String REQUEST_INPUT = "=> ";
 
     public WishListClient(int serverPort) {

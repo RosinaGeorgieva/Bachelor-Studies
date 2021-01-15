@@ -16,7 +16,7 @@ public class SessionsRepository implements Repository<Integer, User> {
     @Override
     public String add(Integer sessionId, User user) {
         userBySession.put(sessionId, user); // da dobavq i proverkite za contains i tn
-        return "neshto si"; //da promenq tova
+        return user.toString();
     }
 
     @Override
@@ -26,5 +26,9 @@ public class SessionsRepository implements Repository<Integer, User> {
 
     public User get(Integer sessionId) {
         return this.userBySession.get(sessionId);
+    }
+
+    public Map<Integer, User> getAllEntries() {
+        return this.userBySession;
     }
 }

@@ -35,7 +35,9 @@ public class WishesRepository implements Repository<User, Wish> {
 
     @Override
     public void remove(User user) {
-        wishesByUser.remove(user);
+        if(wishesByUser.containsKey(user)) {
+            wishesByUser.remove(user);
+        }
     }
 
     public Collection<Wish> get(User user) {

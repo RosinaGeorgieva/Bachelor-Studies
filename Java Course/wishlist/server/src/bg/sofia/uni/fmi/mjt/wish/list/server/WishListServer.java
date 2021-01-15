@@ -5,7 +5,7 @@ import bg.sofia.uni.fmi.mjt.wish.list.server.command.Command;
 import bg.sofia.uni.fmi.mjt.wish.list.server.command.CommandCreator;
 import bg.sofia.uni.fmi.mjt.wish.list.server.command.CommandExecutor;
 import bg.sofia.uni.fmi.mjt.wish.list.server.exception.ClientDisconnectedException;
-import bg.sofia.uni.fmi.mjt.wish.list.server.exception.NotEnoughArgumentsException;
+import bg.sofia.uni.fmi.mjt.wish.list.server.exception.UnknownCommandException;
 
 import java.io.*;
 import java.nio.channels.*;
@@ -81,8 +81,7 @@ public class WishListServer extends AbstractServer {
         try {
             Command command = CommandCreator.newCommand(request);
             return commandExecutor.execute(command);
-        } catch (NotEnoughArgumentsException exception) { //Zashto se catch-va? Da se throwne?? kato runtime?
-            exception.printStackTrace();
+        } catch (UnknownCommandException exception) {
             return exception.getMessage();
         }
     }

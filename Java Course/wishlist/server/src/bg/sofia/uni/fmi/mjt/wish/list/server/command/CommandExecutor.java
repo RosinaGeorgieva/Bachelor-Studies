@@ -19,6 +19,7 @@ public class CommandExecutor extends AbstractClient {
     private static final String NO_STUDENTS_IN_LIST_MESSAGE_FORMAT = "[ There are no students present in the wish list ]%s";
     private static final String WISH_LIST_FORMAT = "[ %s: %s ]%s";
     private static final String LINE_SEPARATOR = System.lineSeparator();
+    private static final String SPACE = " ";
     private static final String UKNOWN_COMMAND_MESSAGE = "[ Unknown command ]" + LINE_SEPARATOR;
     private static final String DISCONNECTED_FROM_SERVER = "[ Disconnected from server ]" + LINE_SEPARATOR;
     private static final String REGISTER = "register";
@@ -86,12 +87,12 @@ public class CommandExecutor extends AbstractClient {
         }
     }
 
-    private String postWish(String authResponse, Command command) { //ima vid post-wish rosi kukla -> args[0] e koi
+    private String postWish(String authResponse, Command command) {
         if(!authResponse.equals(OK)){
             return authResponse;
         }
         String[] wishDescription = Arrays.copyOfRange(command.arguments(), 1, command.arguments().length);
-        String wishDescriptionString = Arrays.stream(wishDescription).collect(Collectors.joining(" ")); //da go sloja tuk da ne e sapce
+        String wishDescriptionString = Arrays.stream(wishDescription).collect(Collectors.joining(SPACE));
         return wishesRepository.add(new User(command.arguments()[0]), new Wish(wishDescriptionString));
     }
 

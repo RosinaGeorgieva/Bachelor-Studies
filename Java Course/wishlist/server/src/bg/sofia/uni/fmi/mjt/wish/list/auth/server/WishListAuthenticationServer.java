@@ -8,14 +8,14 @@ import java.nio.channels.*;
 import java.util.Iterator;
 import java.util.Set;
 
-public class WishListAuthenticationServer extends AbstractServer { //da go napravq naslednik na server vmesto authserver
+public class WishListAuthenticationServer extends AbstractServer {
     private static final String REGISTER = "register";
     private static final String LOGIN = "login";
     private static final String LOGOUT = "logout";
     private static final String POST_WISH = "post-wish";
     private static final String GET_WISH = "get-wish";
 
-    private static final String UNKNOWN_COMMAND_MSG = "[ Unknown command ]" + System.lineSeparator();
+    private static final String UNKNOWN_COMMAND_MSG = "[ Unknown command ]" + System.lineSeparator(); //da vidq ima li smisyl ot tova vuobshte
     static final String CONNECTION_PROBLEM_MESSAGE = "[ There is a problem with the server connection ]" + System.lineSeparator(); //da go opravq
 
     public WishListAuthenticationServer(int serverPort) {
